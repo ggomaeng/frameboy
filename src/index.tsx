@@ -1,10 +1,9 @@
 /** @jsxImportSource frog/jsx */
-import { Button, Frog, TextInput } from "frog";
+import { Frog } from "frog";
 import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
-import { app as pokemon } from "./pokemon";
 import { startProxy } from "../utils/proxy";
-import { streamer } from "./stream";
+import { app as pokemon } from "./pokemon";
 
 declare global {
   var cloudflared: string | undefined;
@@ -21,6 +20,8 @@ const origin =
     : process.env.NODE_ENV === "development"
     ? `http://localhost:${process.env.PORT}`
     : undefined;
+
+console.log({ origin });
 
 const app = new Frog({
   assetsPath: "/",
@@ -56,11 +57,12 @@ app.use("/*", serveStatic({ root: "./public" }));
 devtools(app, { serveStatic });
 
 if (typeof Bun !== "undefined") {
+  const port = process.env.PORT || 3000;
   Bun.serve({
     fetch: app.fetch,
-    port: 3000,
+    port,
   });
-  console.log("Server is running on port 3000");
+  console.log(`Server is running on port ${port}`);
 }
 
 // app.hono.route("/stream", streamer);

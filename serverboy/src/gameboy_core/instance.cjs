@@ -159,8 +159,8 @@ function Instance(ROMImage) {
   this.mixerOutputCache = 0;
   //Pre-multipliers to cache some calculations:
   // this.emulatorSpeed = 1;
-  // HACK faster speed
-  this.emulatorSpeed = 5;
+  // HACK 8x faster speed
+  this.emulatorSpeed = 8;
   this.initializeTiming();
   //Audio generation counters:
   this.audioTicks = 0; //Used to sample the audio system every x CPU instructions.

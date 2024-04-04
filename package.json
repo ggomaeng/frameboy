@@ -18,7 +18,8 @@
     "gifencoder": "^2.0.1",
     "gifsockets": "^0.1.2",
     "hono": "^4",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "sharp": "^0.33.3"
   },
   "devDependencies": {
     "@types/bun": "latest",

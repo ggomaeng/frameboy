@@ -1,15 +1,17 @@
-const GameBoyAdvance = require("../../gba");
-import { readFileSync, writeFileSync } from "fs";
+const GameBoy = require("../../serverboy");
+import { readFileSync } from "fs";
+import ServerBoy from "../../types/serverboy";
+import { CREDIT, EMPTY_FRAME_160_144 } from "../constants/frame";
 import GIFEncoder from "gifencoder";
-import { PNG } from "pngjs";
-import GBA from "../../types/gba";
-import { sleep } from "../../utils/time";
-import { EMPTY_FRAME } from "../constants/frame";
+
+declare global {
+  var gbaManager: GbaManager;
+}
 
 const rootDir = process.cwd();
 
 export class GbaManager {
-  private instancese: Record<number, GBA> = {};
+  private instancese: Record<number, ServerBoy> = {};
 
   private static instance: GbaManager;
 
@@ -17,97 +19,72 @@ export class GbaManager {
     // private to prevent direct construction calls with the `new` operator.
   }
 
-  private createGameboy(fid: number) {
+  public getGameboy(fid: number) {
     if (this.instancese[fid]) {
       return this.instancese[fid];
     }
-    const gba = new GameBoyAdvance() as GBA;
-    const biosBuf = readFileSync(`${rootDir}/gba/resources/bios.bin`);
-    console.log(biosBuf);
-    gba.logLevel = gba.LOG_ERROR;
-    gba.setBios(biosBuf);
-    gba.setCanvasMemory();
+    const gameboy: ServerBoy = new GameBoy();
 
-    this.instancese[fid] = gba;
-
-    return gba;
+    this.instancese[fid] = gameboy;
+    return gameboy;
   }
 
-  public getGameboy(fid: number) {
-    if (!this.instancese[fid]) {
-      // throw new Error(`Gameboy for ${fid} not found`);
-      return this.createGameboy(fid);
-    }
-    return this.instancese[fid];
+  public startGame(fid: number, game: `${string}.gbc`) {
+    const gameboy = this.getGameboy(fid);
+    const rom = readFileSync(`${rootDir}/roms/${game}`);
+    // check for existing state  exists in /saves/[fid].json
+    let saveState = readFileSync(`${rootDir}/states/start.json`);
+    try {
+      saveState = readFileSync(`${rootDir}/saves/${game}/${fid}.json`);
+    } catch (error) {}
+
+    const parsed = JSON.parse(saveState.toString());
+    gameboy.load(rom, parsed);
   }
 
   public static getInstance(): GbaManager {
+    if (globalThis.gbaManager) {
+      return globalThis.gbaManager;
+    }
     if (!GbaManager.instance) {
       GbaManager.instance = new GbaManager();
+      globalThis.gbaManager = GbaManager.instance;
     }
     return GbaManager.instance;
   }
 
-  public startGame(fid: number, game: string) {
-    const gameboy = this.createGameboy(fid);
-    const romPath = `${rootDir}/roms/nointro.gba`;
-    gameboy.loadRomFromFile(romPath, function (err: any, result: any) {
-      if (err) {
-        console.error("loadRom failed:", err);
-        process.exit(1);
-      }
-      console.log("loadRom result:", game);
-      // gameboy.runStable();
-    });
-    return gameboy;
-  }
-
   public async generateGif(fid: number) {
     const gameboy = this.getGameboy(fid);
-
-    await sleep(100);
-
-    const framesToRender = 4000;
-
-    let tick = 0;
+    const frameRenderCount = 20;
     const start = Date.now();
-    console.log("starting");
-    const encoder = new GIFEncoder(240, 240);
-    encoder.setRepeat(0);
-    encoder.setDelay(0);
+
+    // Create a GIFEncoder instance.
+    const encoder = new GIFEncoder(160, 160); // Change the dimensions as needed.
+    encoder.setDelay(1000 / 60); // 60 FPS
     encoder.setQuality(10);
+    encoder.setRepeat(-1);
     encoder.start();
-    while (tick < framesToRender) {
-      // gameboy.turbo(speedMultiplier);
-      console.log("tick", tick);
-      gameboy.step();
-      const png = gameboy.screenshot();
-      const rgbArray: number[] = structuredClone(EMPTY_FRAME);
-      // start from 9600 pixels per row * 4 index to keep top offset
-      png.data.forEach((byte, index) => {
-        rgbArray[38400 + index] = byte;
-      });
 
-      const img = Buffer.from(rgbArray);
-      const output = new PNG({
-        width: 240,
-        height: 240,
-      });
-      output.data = img;
-      const file = PNG.sync.write(output);
-
-      writeFileSync(`./gb.png`, file);
+    for (let i = 0; i < frameRenderCount; i++) {
+      gameboy.doFrame();
+      const screen = gameboy.getScreen();
+      const rgbaArray: number[] = structuredClone(EMPTY_FRAME_160_144);
+      // const top8Rows = 160 * 8 * 4;
+      for (let i = 0; i < screen.length; i++) {
+        rgbaArray[i] = screen[i];
+      }
+      // console.log(rgbaArray.length);
+      rgbaArray.push(...CREDIT);
+      const img = Buffer.from(rgbaArray);
+      // console.log(rgbaArray.length);
       encoder.addFrame(img as any);
-
-      tick++;
     }
 
     const end = Date.now();
+    console.log(`Rendered ${frameRenderCount} frames in ${end - start}ms`);
+
     encoder.finish();
     const buffer = encoder.out.getData();
-    console.log(buffer);
-    console.log("took", end - start, "ms to render", framesToRender);
-    writeFileSync(`./gb.gif`, buffer);
     return buffer;
   }
 }

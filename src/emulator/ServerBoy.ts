@@ -1,6 +1,6 @@
 const GameBoy = require("../../serverboy");
 import { createWriteStream, readFileSync, writeFileSync } from "fs";
-import { EMPTY_FRAME_160_160 } from "../constants/frame";
+import { EMPTY_FRAME_160_144 } from "../constants/frame";
 import { PNG } from "pngjs";
 import GIFEncoder from "gifencoder";
 import ServerBoy from "../../types/serverboy";
@@ -37,7 +37,7 @@ for (let i = 0; i < frameRenderCount; i++) {
   // }
   gameboy.doFrame();
   const screen = gameboy.getScreen();
-  const rgbaArray: number[] = structuredClone(EMPTY_FRAME_160_160);
+  const rgbaArray: number[] = structuredClone(EMPTY_FRAME_160_144);
   const top8Rows = 160 * 8 * 4;
   for (let i = 0; i < screen.length; i++) {
     rgbaArray[top8Rows + i] = screen[i];

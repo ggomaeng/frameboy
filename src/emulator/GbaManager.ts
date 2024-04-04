@@ -1,13 +1,10 @@
 const GameBoyAdvance = require("../../gba");
-import { writeFileSync, readFileSync } from "fs";
-import GBA from "../../types/gba";
-import gifencoder from "gifencoder";
-import { createCanvas, loadImage } from "@napi-rs/canvas";
-import { Writable } from "stream";
-import { PNG } from "pngjs";
+import { readFileSync, writeFileSync } from "fs";
 import GIFEncoder from "gifencoder";
-import { EMPTY_FRAME } from "../constants/frame";
+import { PNG } from "pngjs";
+import GBA from "../../types/gba";
 import { sleep } from "../../utils/time";
+import { EMPTY_FRAME } from "../constants/frame";
 
 const rootDir = process.cwd();
 
@@ -80,7 +77,6 @@ export class GbaManager {
     encoder.setDelay(0);
     encoder.setQuality(10);
     encoder.start();
-    const speedMultiplier = 10000;
     while (tick < framesToRender) {
       // gameboy.turbo(speedMultiplier);
       console.log("tick", tick);
@@ -105,6 +101,7 @@ export class GbaManager {
 
       tick++;
     }
+
     const end = Date.now();
     encoder.finish();
     const buffer = encoder.out.getData();

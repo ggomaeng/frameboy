@@ -49,12 +49,12 @@ app.hono.get("/stream/:id", async (c) => {
 
 app.frame("/", async (c) => {
   return c.res({
-    image: "https://i.imgur.com/pWLifDi.gif",
-    intents: [<Button action="/start">Start</Button>],
+    image: "https://r2.easyimg.io/o7loqv80m/gbc_optimize.gif",
+    intents: [<Button action="/play">Play Pokemon Yellow</Button>],
   });
 });
 
-app.frame("/start", neynarMiddleware, async (c) => {
+app.frame("/play", neynarMiddleware, async (c) => {
   const { deriveState } = c;
   const user = c.var.interactor;
   const fid = user?.fid || 1;

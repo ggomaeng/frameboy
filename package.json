@@ -1,0 +1,30 @@
+{
+  "name": "degenboy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "frog dev",
+    "serve": "NODE_ENV=production bun run src/index.tsx",
+    "watch": "bun --hot src/index.tsx",
+    "proxy": "NODE_ENV=production PROXY=true bun --hot src/index.tsx"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.51",
+    "@types/lodash-es": "^4.17.12",
+    "dotenv": "^16.4.5",
+    "frog": "^0.8.0",
+    "gifencoder": "^2.0.1",
+    "gifsockets": "^0.1.2",
+    "hono": "^4",
+    "lodash-es": "^4.17.21",
+    "serverboy": "^0.0.7"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/fabric": "^5.3.7",
+    "@types/gifencoder": "^2.0.3",
+    "@types/pngjs": "^6.0.4",
+    "bun": "latest",
+    "cloudflared": "^0.5.1"
+  }
+}

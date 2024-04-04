@@ -8,7 +8,7 @@ const origin =
     ? globalThis.cloudflared
     : process.env.NODE_ENV === "development"
     ? `http://localhost:${process.env.PORT}`
-    : undefined;
+    : "https://frameboy.xyz";
 
 const GBA = GbaManager.getInstance();
 

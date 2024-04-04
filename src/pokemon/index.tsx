@@ -1,8 +1,14 @@
 /** @jsxImportSource frog/jsx */
 import { Button, Frog, TextInput } from "frog";
-import { NeynarVariables, neynar } from "frog/middlewares";
+import { neynar } from "frog/middlewares";
 import { NEYNAR_API_KEY } from "../../env/server-env.js";
 import { GbaManager } from "../emulator/GbaManager.js";
+const origin =
+  process.env.PROXY && globalThis.cloudflared !== undefined
+    ? globalThis.cloudflared
+    : process.env.NODE_ENV === "development"
+    ? `http://localhost:${process.env.PORT}`
+    : undefined;
 
 const GBA = GbaManager.getInstance();
 
@@ -86,7 +92,7 @@ app.frame("/play", neynarMiddleware, async (c) => {
   });
 
   return c.res({
-    image: `http://localhost:3000/api/pokemon/stream/${fid}?t=${Date.now()}`,
+    image: `${origin}/api/pokemon/stream/${fid}?t=${Date.now()}`,
     intents:
       state.mode === "move"
         ? [

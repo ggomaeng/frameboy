@@ -1,9 +1,12 @@
 /** @jsxImportSource frog/jsx */
+import dotenv from "dotenv";
 import { Frog } from "frog";
 import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
 import { startProxy } from "../utils/proxy";
 import { app as pokemon } from "./pokemon";
+
+dotenv.config();
 
 declare global {
   var cloudflared: string | undefined;

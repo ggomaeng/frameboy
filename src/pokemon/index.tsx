@@ -3,6 +3,7 @@ import { Button, Frog, TextInput } from "frog";
 import { neynar } from "frog/middlewares";
 import { NEYNAR_API_KEY } from "../../env/server-env.js";
 import { GbaManager } from "../emulator/GbaManager.js";
+import { Logger } from "../../utils/Logger";
 const origin =
   process.env.PROXY && globalThis.cloudflared !== undefined
     ? globalThis.cloudflared
@@ -57,6 +58,11 @@ app.hono.get("/stream/:id", async (c) => {
       "Cache-Control": "no-store",
     },
   });
+});
+
+app.use(async (c, next) => {
+  Logger.info(`[${c.req.method}] ${c.req.url}`);
+  await next();
 });
 
 app.frame("/", async (c) => {

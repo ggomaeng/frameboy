@@ -11,9 +11,11 @@ const rom = readFileSync(`${root}/roms/yellow.gbc`);
 
 const gameboy: ServerBoy = new GameBoy();
 // gameboy.loadRom(rom);
-const saveBuffer = readFileSync(`./gbc_memory.json`);
+const saveBuffer = readFileSync(`./loading-ended.json`);
 const parsed = JSON.parse(saveBuffer.toString());
 gameboy.load(rom, parsed);
+
+gameboy.pressKey("A");
 
 const frameRenderCount = 300;
 const start = Date.now();

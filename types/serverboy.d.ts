@@ -33,13 +33,13 @@ export default class ServerBoy {
    * Presses a single key. Keys are automatically released at the end of each frame.
    * @param key The key to press, based on the KEYMAP enum.
    */
-  pressKey(key: typeof ServerBoy.KEYMAP): void;
+  pressKey(key: keyof typeof ServerBoy.KEYMAP): void;
 
   /**
    * Presses multiple keys. Keys are automatically released at the end of each frame.
    * @param keys An array of keys to press, based on the KEYMAP enum.
    */
-  pressKeys(keys: (typeof ServerBoy.KEYMAP)[]): void;
+  pressKeys(keys: (keyof typeof ServerBoy.KEYMAP)[]): void;
 
   /**
    * Returns an array containing the entire Gameboy memory contents, divided into roughly 64,000 256-bit chunks.

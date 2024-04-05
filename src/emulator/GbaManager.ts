@@ -3,7 +3,6 @@ import { readFileSync } from "fs";
 import ServerBoy from "../../types/serverboy";
 import { CREDIT, EMPTY_FRAME_160_144 } from "../constants/frame";
 import GIFEncoder from "gifencoder";
-import sharp from "sharp";
 
 declare global {
   var gbaManager: GbaManager;
@@ -56,7 +55,7 @@ export class GbaManager {
 
   public async generateGif(fid: number) {
     const gameboy = this.getGameboy(fid);
-    const frameRenderCount = 5;
+    const frameRenderCount = 3;
     const start = Date.now();
 
     // Create a GIFEncoder instance.
@@ -67,8 +66,6 @@ export class GbaManager {
     encoder.start();
 
     for (let i = 0; i < frameRenderCount; i++) {
-      gameboy.doFrame();
-      gameboy.doFrame();
       gameboy.doFrame();
       const screen = gameboy.getScreen();
       const rgbaArray: number[] = structuredClone(EMPTY_FRAME_160_144);

@@ -160,7 +160,7 @@ function Instance(ROMImage) {
   //Pre-multipliers to cache some calculations:
   // this.emulatorSpeed = 1;
   // HACK 20x faster speed
-  this.emulatorSpeed = 40;
+  this.emulatorSpeed = 100;
   this.initializeTiming();
   //Audio generation counters:
   this.audioTicks = 0; //Used to sample the audio system every x CPU instructions.

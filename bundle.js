@@ -1,5 +1,7 @@
+import lightningcss from "bun-lightningcss";
+
 await Bun.build({
   entrypoints: ["./src/index.tsx"],
-  outdir: "./build",
-  target: "bun",
+  outdir: "./dist",
+  plugins: [lightningcss()],
 });

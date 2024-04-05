@@ -36,7 +36,7 @@ export class GbaManager {
 
   private constructor() {
     console.log('GbaManager created - running ticks');
-    setInterval(this.cleanupInactiveInstances.bind(this), 1000 * 60 * 2); // check every 2 minutes
+    setInterval(this.cleanupInactiveInstances.bind(this), 1000 * 60 * 10); // check every 10 minutes
   }
 
   private cleanupInactiveInstances() {
@@ -44,7 +44,7 @@ export class GbaManager {
     const now = Date.now();
     for (const fid in this.instances) {
       const instance = this.instances[fid];
-      if (now - instance.lastActivityAt > 1000 * 60 * 2) {
+      if (now - instance.lastActivityAt > 1000 * 60 * 10) {
         instance.gameboy.cleanup();
         delete this.instances[fid];
       }

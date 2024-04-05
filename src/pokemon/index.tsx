@@ -102,7 +102,7 @@ app.frame('/play', neynarMiddleware, async (c) => {
     return c.res(help);
   }
 
-  if (GBA.getTotalPlayers() >= 100) {
+  if (GBA.getTotalPlayers() >= 1000) {
     return c.res({
       image: (
         <div tw="flex h-full w-full flex-col items-center justify-center bg-black text-white">

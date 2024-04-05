@@ -27,7 +27,9 @@
     "@types/gifencoder": "^2.0.3",
     "@types/pngjs": "^6.0.4",
     "bun": "latest",
-    "cloudflared": "^0.5.1"
+    "cloudflared": "^0.5.1",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier-plugin-tailwindcss": "^0.5.13"
   },
   "version": "0.0.7"
 }

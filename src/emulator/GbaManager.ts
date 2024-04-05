@@ -1,8 +1,8 @@
-const GameBoy = require("../../serverboy");
-import { readFileSync } from "fs";
-import ServerBoy from "../../types/serverboy";
-import { CHAT, CREDIT, EMPTY_FRAME_160_144 } from "../constants/pixeldata";
-import GIFEncoder from "gifencoder";
+const GameBoy = require('../../serverboy');
+import { readFileSync } from 'fs';
+import ServerBoy from '../../types/serverboy';
+import { CHAT, CREDIT, EMPTY_FRAME_160_144 } from '../constants/pixeldata';
+import GIFEncoder from 'gifencoder';
 
 declare global {
   var gbaManager: GbaManager;
@@ -35,12 +35,12 @@ export class GbaManager {
   }
 
   private constructor() {
-    console.log("GbaManager created - running ticks");
+    console.log('GbaManager created - running ticks');
     setInterval(this.cleanupInactiveInstances.bind(this), 1000 * 60 * 2); // check every 2 minutes
   }
 
   private cleanupInactiveInstances() {
-    console.log("Cleaning up inactive instances");
+    console.log('Cleaning up inactive instances');
     const now = Date.now();
     for (const fid in this.instances) {
       const instance = this.instances[fid];
@@ -56,7 +56,7 @@ export class GbaManager {
   }
 
   public updateActivity(fid: number) {
-    console.log("Updating activity", fid);
+    console.log('Updating activity', fid);
     this.instances[fid].lastActivityAt = Date.now();
   }
 
@@ -89,36 +89,35 @@ export class GbaManager {
 
   public async generateGif(
     fid: number,
-    keyPress: keyof typeof ServerBoy.KEYMAP
+    keyPress: keyof typeof ServerBoy.KEYMAP,
   ) {
     const gameboy = this.getGameboy(fid);
     const start = Date.now();
 
     const wasMove =
-      keyPress === "RIGHT" ||
-      keyPress === "LEFT" ||
-      keyPress === "UP" ||
-      keyPress === "DOWN";
+      keyPress === 'RIGHT' ||
+      keyPress === 'LEFT' ||
+      keyPress === 'UP' ||
+      keyPress === 'DOWN';
 
     // Create a GIFEncoder instance.
     const encoder = new GIFEncoder(160, 160); // Change the dimensions as needed.
     encoder.start(); // order is important
-    // encoder.setDelay(1000 / 30); // 30 FPS
+    encoder.setDelay(1000 / 15); // 30 FPS
     encoder.setQuality(10);
     // for chat don't repeat
 
     const CHAT_SIZE = CHAT.length;
     const FAST_SPEED = 200;
-    const DEFAULT_SPEED = 35;
     let frameRenderCount = 5;
 
     if (!wasMove) {
-      encoder.setRepeat(-1);
       gameboy.setSpeed(FAST_SPEED);
+      encoder.setRepeat(-1);
     } else {
-      frameRenderCount = 3;
-      encoder.setRepeat(0);
-      gameboy.setSpeed(DEFAULT_SPEED);
+      frameRenderCount = 4;
+      gameboy.setSpeed(5);
+      encoder.setRepeat(-1);
     }
 
     let isChat = true;

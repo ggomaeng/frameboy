@@ -109,14 +109,15 @@ export class GbaManager {
 
     const CHAT_SIZE = CHAT.length;
     const FAST_SPEED = 200;
+    const DEFAULT_SPEED = 35;
     let frameRenderCount = 5;
 
     if (!wasMove) {
       gameboy.setSpeed(FAST_SPEED);
       encoder.setRepeat(-1);
     } else {
-      frameRenderCount = 4;
-      gameboy.setSpeed(5);
+      frameRenderCount = 3;
+      gameboy.setSpeed(DEFAULT_SPEED);
       encoder.setRepeat(-1);
     }
 

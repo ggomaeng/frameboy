@@ -140,9 +140,7 @@ app.frame('/play', neynarMiddleware, async (c) => {
       let index = buttonIndex;
       if (previousState.mode === 'menu') index += 4;
       const key = BUTTONS[index as keyof typeof BUTTONS];
-      if (previousState.multiplier > 1) {
-        gameboy.setSpeed(35);
-      }
+      gameboy.setSpeed(35);
       for (let i = 0; i < previousState.multiplier; i++) {
         gameboy.pressKey(key);
         gameboy.doFrame();

@@ -4,7 +4,7 @@ git pull && npm version patch && git push &&
 
 TIMESTAMP=`date +%Y-%m-%d-%H-%M-%S` &&
 RELEASE_DIR="/srv/web/frameboy.xyz" &&
-BUN="/home/updatebot/.bun/bin/bun" &&
+BUN="/home/ubuntu/.bun/bin/bun" &&
 
 echo "Copy .env.production to the shared directory and link..." &&
 scp .env.production oracle:$RELEASE_DIR/.env &&

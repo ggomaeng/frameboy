@@ -30,5 +30,6 @@
     "@types/pngjs": "^6.0.4",
     "bun": "latest",
     "cloudflared": "^0.5.1"
-  }
+  },
+  "version": "0.0.1"
 }

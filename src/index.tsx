@@ -5,6 +5,7 @@ import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
 import { startProxy } from "../utils/proxy";
 import { app as pokemon } from "./pokemon";
+import { Logger } from "../utils/Logger";
 
 dotenv.config();
 
@@ -34,25 +35,10 @@ const app = new Frog({
   // hub: neynar({ apiKey: 'NEYNAR_FROG_FM' })
 });
 
-// Uncomment to use Edge Runtime
-// export const runtime = 'edge'
-
-// app.frame("/", (c) => {
-//   const { buttonValue, inputText, status } = c;
-//   const fruit = inputText || buttonValue;
-//   return c.res({
-//     image: (
-// <div tw='flex items-center justify-center'></div>
-//     ),
-//     intents: [
-//       <TextInput placeholder="Enter custom fruit..." />,
-//       <Button value="apples">Apples</Button>,
-//       <Button value="oranges">Oranges</Button>,
-//       <Button value="bananas">Bananas</Button>,
-//       status === "response" && <Button.Reset>Reset</Button.Reset>,
-//     ],
-//   });
-// });
+app.use(async (c, next) => {
+  Logger.info(`[${c.req.method}] ${c.req.url}`);
+  await next();
+});
 
 app.route("/pokemon", pokemon);
 

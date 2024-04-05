@@ -1,0 +1,16 @@
+{
+  "apps": [
+    {
+      "name": "frameboy",
+      "script": "src/index.tsx",
+      "exec_mode": "fork",
+      "node_args": "",
+      "merge_logs": true,
+      "interpreter": "/home/updatebot/.bun/bin/bun",
+      "cwd": "/srv/web/mintv2-frames",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

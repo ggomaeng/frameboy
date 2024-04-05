@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "frog dev",
     "serve": "NODE_ENV=production bun run src/index.tsx",
+    "build": "bun run bundle.js",
     "watch": "bun --hot src/index.tsx",
     "proxy": "NODE_ENV=production PROXY=true bun --hot src/index.tsx"
   },

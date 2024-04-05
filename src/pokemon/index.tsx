@@ -2,10 +2,9 @@
 import dotenv from "dotenv";
 import { Button, Frog, TextInput } from "frog";
 import { neynar } from "frog/middlewares";
+import sharp from "sharp";
 import { NEYNAR_API_KEY } from "../../env/server-env.js";
 import { GbaManager } from "../emulator/GbaManager.js";
-import { Logger } from "../../utils/Logger";
-import sharp from "sharp";
 
 dotenv.config();
 
@@ -66,11 +65,6 @@ app.hono.get("/stream/:id", async (c) => {
   });
 });
 
-app.use(async (c, next) => {
-  Logger.info(`[${c.req.method}] ${c.req.url}`);
-  await next();
-});
-
 app.frame("/", async (c) => {
   return c.res({
     image: "https://r2.easyimg.io/o7loqv80m/gbc_optimize.gif",
@@ -80,7 +74,6 @@ app.frame("/", async (c) => {
 
 app.frame("/play", neynarMiddleware, async (c) => {
   const { deriveState, buttonIndex, inputText } = c;
-  console.log(buttonIndex);
   const user = c.var.interactor;
   const fid = user?.fid || 1;
 

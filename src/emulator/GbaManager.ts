@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import ServerBoy from "../../types/serverboy";
 import { CREDIT, EMPTY_FRAME_160_144 } from "../constants/frame";
 import GIFEncoder from "gifencoder";
+import sharp from "sharp";
 
 declare global {
   var gbaManager: GbaManager;
@@ -77,7 +78,8 @@ export class GbaManager {
       }
       // console.log(rgbaArray.length);
       rgbaArray.push(...CREDIT);
-      const img = Buffer.from(rgbaArray);
+      const img = await Buffer.from(rgbaArray);
+
       // console.log(rgbaArray.length);
       encoder.addFrame(img as any);
     }

@@ -1,7 +1,7 @@
 const GameBoy = require("../../serverboy");
 import { readFileSync } from "fs";
 import ServerBoy from "../../types/serverboy";
-import { CREDIT, EMPTY_FRAME_160_144 } from "../constants/frame";
+import { CHAT, CREDIT, EMPTY_FRAME_160_144 } from "../constants/pixeldata";
 import GIFEncoder from "gifencoder";
 
 declare global {
@@ -23,6 +23,7 @@ export class GbaManager {
     if (this.instancese[fid]) {
       return this.instancese[fid];
     }
+
     const gameboy: ServerBoy = new GameBoy();
 
     this.instancese[fid] = gameboy;
@@ -33,7 +34,7 @@ export class GbaManager {
     const gameboy = this.getGameboy(fid);
     const rom = readFileSync(`${rootDir}/roms/${game}`);
     // check for existing state  exists in /saves/[fid].json
-    let saveState = readFileSync(`${rootDir}/states/start.json`);
+    let saveState = readFileSync(`${rootDir}/states/skipped-intro.json`);
     try {
       saveState = readFileSync(`${rootDir}/saves/${game}/${fid}.json`);
     } catch (error) {}
@@ -53,29 +54,51 @@ export class GbaManager {
     return GbaManager.instance;
   }
 
-  public async generateGif(fid: number) {
+  public async generateGif(
+    fid: number,
+    keyPress: keyof typeof ServerBoy.KEYMAP
+  ) {
     const gameboy = this.getGameboy(fid);
-    const frameRenderCount = 3;
     const start = Date.now();
+
+    const wasMove =
+      keyPress === "RIGHT" ||
+      keyPress === "LEFT" ||
+      keyPress === "UP" ||
+      keyPress === "DOWN";
 
     // Create a GIFEncoder instance.
     const encoder = new GIFEncoder(160, 160); // Change the dimensions as needed.
-    // encoder.setDelay(1000 / 60); // 60 FPS
+    encoder.start(); // order is important
+    // encoder.setDelay(1000 / 30); // 30 FPS
     encoder.setQuality(10);
-    encoder.setRepeat(0);
-    encoder.start();
+    // for chat don't repeat
+    encoder.setRepeat(wasMove ? 0 : -1);
 
+    const CHAT_SIZE = CHAT.length;
+    const LONGER_FRAME_COUNT = 50;
+    let frameRenderCount = wasMove ? 5 : 10;
+    let isChat = true;
     for (let i = 0; i < frameRenderCount; i++) {
       gameboy.doFrame();
       const screen = gameboy.getScreen();
       const rgbaArray: number[] = structuredClone(EMPTY_FRAME_160_144);
-      // const top8Rows = 160 * 8 * 4;
+      let j = 0;
       for (let i = 0; i < screen.length; i++) {
         rgbaArray[i] = screen[i];
+
+        if (i > screen.length - CHAT_SIZE && CHAT[++j] !== screen[i]) {
+          isChat = false;
+        }
       }
-      // console.log(rgbaArray.length);
+
+      // render longer frames if not chat & move is not pressed
+      if (!isChat && !wasMove && frameRenderCount < LONGER_FRAME_COUNT) {
+        console.log("incrase framerender");
+        frameRenderCount = LONGER_FRAME_COUNT;
+      }
       rgbaArray.push(...CREDIT);
-      const img = await Buffer.from(rgbaArray);
+      const img = Buffer.from(rgbaArray);
 
       // console.log(rgbaArray.length);
       encoder.addFrame(img as any);

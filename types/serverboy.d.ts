@@ -18,6 +18,8 @@ export default class ServerBoy {
    */
   constructor();
 
+  initialized(): boolean;
+
   /**
    * Loads a ROM into the Gameboy instance. ROMs are passed in as Node.js Buffers.
    * @param rom The ROM file data as a Buffer.

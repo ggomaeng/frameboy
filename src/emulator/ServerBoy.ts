@@ -1,6 +1,6 @@
 const GameBoy = require("../../serverboy");
 import { createWriteStream, readFileSync, writeFileSync } from "fs";
-import { EMPTY_FRAME_160_144 } from "../constants/frame";
+import { EMPTY_FRAME_160_144 } from "../constants/pixeldata";
 import { PNG } from "pngjs";
 import GIFEncoder from "gifencoder";
 import ServerBoy from "../../types/serverboy";

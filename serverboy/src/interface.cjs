@@ -190,6 +190,11 @@ Interface.prototype = {
     _that.gameboy.stopEmulator |= 2;
   },
 
+  initialized: function () {
+    let _that = this[PRIVATE];
+    return typeof _that.gameboy === "object" && _that.gameboy != null;
+  },
+
   save: function () {
     let _that = this[PRIVATE];
     return _that.gameboy.saveState();

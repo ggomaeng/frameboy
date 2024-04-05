@@ -14,19 +14,19 @@ export default {
         tw="mt-5 flex items-center justify-start text-lg"
         style={{ gap: 10 }}
       >
-        <div tw="flex h-10 w-10 items-center justify-center rounded-full bg-blue-300 p-1 text-black">
+        <div tw="flex h-10 w-10 items-center justify-center rounded-full bg-[#492C98] p-1 text-black">
           1
         </div>
-        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-blue-300 p-1">
+        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-[#492C98] p-1">
           ←
         </div>
-        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-blue-300 p-1">
+        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-[#492C98] p-1">
           →
         </div>
-        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-blue-300 p-1">
+        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-[#492C98] p-1">
           ↑
         </div>
-        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-blue-300 p-1">
+        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-[#492C98] p-1">
           ↓
         </div>
       </div>
@@ -35,19 +35,19 @@ export default {
         tw="mt-5 flex items-center justify-start text-lg"
         style={{ gap: 10 }}
       >
-        <div tw="flex h-10 w-10 items-center justify-center rounded-full bg-blue-300 p-1 text-black">
+        <div tw="flex h-10 w-10 items-center justify-center rounded-full bg-[#492C98] p-1 text-black">
           2
         </div>
-        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-blue-300 p-1">
+        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-[#492C98] p-1">
           SEL
         </div>
-        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-blue-300 p-1">
+        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-[#492C98] p-1">
           START
         </div>
-        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-blue-300 p-1">
+        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-[#492C98] p-1">
           A
         </div>
-        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-blue-300 p-1">
+        <div tw="flex h-10 min-w-10 items-center justify-center border-2 border-[#492C98] p-1">
           B
         </div>
       </div>
@@ -63,5 +63,5 @@ export default {
       </div>
     </div>
   ),
-  intents: [<Button>Refresh</Button>],
+  intents: [<Button>Back</Button>],
 };

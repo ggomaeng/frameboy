@@ -148,10 +148,23 @@ app.frame('/play', neynarMiddleware, async (c) => {
     } else if (buttonIndex) {
       const gameboy = GBA.getGameboy(fid);
       GBA.updateActivity(fid);
+
+      const prevSave = gameboy.save();
+      // save state per user
+      writeFile(
+        `${rootDir}/saves/${GAME}/${fid}-backup.json`,
+        JSON.stringify(prevSave),
+        (err) => {
+          if (err) {
+            console.error(err);
+          }
+        },
+      );
+
       let index = buttonIndex;
       if (previousState.mode === 'menu') index += 4;
       const key = BUTTONS[index as keyof typeof BUTTONS];
-      gameboy.setSpeed(35);
+      gameboy.setSpeed(30);
       for (let i = 0; i < previousState.multiplier; i++) {
         gameboy.pressKey(key);
         gameboy.doFrame();
@@ -165,10 +178,11 @@ app.frame('/play', neynarMiddleware, async (c) => {
 
       previousState.lastKey = key;
 
+      const newSave = gameboy.save();
       // save state per user
       writeFile(
         `${rootDir}/saves/${GAME}/${fid}.json`,
-        JSON.stringify(gameboy.save()),
+        JSON.stringify(newSave),
         (err) => {
           if (err) {
             console.error(err);

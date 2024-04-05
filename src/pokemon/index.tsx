@@ -111,7 +111,9 @@ app.frame('/play', neynarMiddleware, async (c) => {
 
   const state = deriveState((previousState) => {
     const gameboy = GBA.getGameboy(fid);
-
+    if (!gameboy.initialized()) {
+      GBA.startGame(fid, GAME);
+    }
     // debug
     if (inputText === 'memory') {
       const memory = gameboy.save();
@@ -132,8 +134,6 @@ app.frame('/play', neynarMiddleware, async (c) => {
       } else {
         previousState.mode = 'move';
       }
-    } else if (!gameboy.initialized()) {
-      GBA.startGame(fid, GAME);
     } else if (buttonIndex) {
       const gameboy = GBA.getGameboy(fid);
       GBA.updateActivity(fid);

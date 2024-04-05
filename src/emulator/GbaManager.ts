@@ -55,17 +55,19 @@ export class GbaManager {
 
   public async generateGif(fid: number) {
     const gameboy = this.getGameboy(fid);
-    const frameRenderCount = 20;
+    const frameRenderCount = 5;
     const start = Date.now();
 
     // Create a GIFEncoder instance.
     const encoder = new GIFEncoder(160, 160); // Change the dimensions as needed.
-    encoder.setDelay(1000 / 60); // 60 FPS
+    // encoder.setDelay(1000 / 60); // 60 FPS
     encoder.setQuality(10);
-    encoder.setRepeat(-1);
+    encoder.setRepeat(0);
     encoder.start();
 
     for (let i = 0; i < frameRenderCount; i++) {
+      gameboy.doFrame();
+      gameboy.doFrame();
       gameboy.doFrame();
       const screen = gameboy.getScreen();
       const rgbaArray: number[] = structuredClone(EMPTY_FRAME_160_144);

@@ -1,15 +1,22 @@
 /** @jsxImportSource frog/jsx */
+import dotenv from "dotenv";
 import { Button, Frog, TextInput } from "frog";
 import { neynar } from "frog/middlewares";
 import { NEYNAR_API_KEY } from "../../env/server-env.js";
 import { GbaManager } from "../emulator/GbaManager.js";
 import { Logger } from "../../utils/Logger";
+import sharp from "sharp";
+
+dotenv.config();
+
 const origin =
   process.env.PROXY && globalThis.cloudflared !== undefined
     ? globalThis.cloudflared
-    : process.env.NODE_ENV === "development"
+    : process.env.NODE_ENV !== "production"
     ? `http://localhost:${process.env.PORT}`
     : "https://frameboy.xyz";
+
+console.log(origin);
 
 const GBA = GbaManager.getInstance();
 
@@ -38,10 +45,6 @@ export const app = new Frog<{
   State: AppState;
 }>({
   imageAspectRatio: "1:1",
-  imageOptions: {
-    width: 160,
-    height: 160,
-  },
   initialState: {
     started: false,
     mode: "menu",
@@ -51,8 +54,11 @@ export const app = new Frog<{
 app.hono.get("/stream/:id", async (c) => {
   const id = Number(c.req.param("id"));
   const gif = await GBA.generateGif(id);
+  const resized = await sharp(gif, { animated: true })
+    .resize(160, 160)
+    .toBuffer();
 
-  return new Response(gif, {
+  return new Response(resized, {
     headers: {
       "Content-Type": "image/gif",
       "Cache-Control": "no-store",
@@ -98,7 +104,7 @@ app.frame("/play", neynarMiddleware, async (c) => {
   });
 
   return c.res({
-    image: `${origin}/api/pokemon/stream/${fid}?t=${Date.now()}`,
+    image: `${origin}/pokemon/stream/${fid}?t=${Date.now()}`,
     intents:
       state.mode === "move"
         ? [

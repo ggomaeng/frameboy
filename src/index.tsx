@@ -20,7 +20,7 @@ if (process.env.PROXY === "true" && !globalThis.cloudflared) {
 const origin =
   process.env.PROXY && globalThis.cloudflared !== undefined
     ? globalThis.cloudflared
-    : process.env.NODE_ENV === "development"
+    : process.env.NODE_ENV !== "production"
     ? `http://localhost:${process.env.PORT}`
     : "https://frameboy.xyz";
 
@@ -28,7 +28,7 @@ console.log({ origin });
 
 const app = new Frog({
   assetsPath: "/",
-  basePath: "/api",
+  basePath: "/",
   origin,
   // Supply a Hub to enable frame verification.
   // hub: neynar({ apiKey: 'NEYNAR_FROG_FM' })

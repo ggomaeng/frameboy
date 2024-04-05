@@ -1,5 +1,5 @@
-"use-strict";
-var GameBoyCore = require("./gameboy_core/gameboy.cjs");
+'use-strict';
+var GameBoyCore = require('./gameboy_core/gameboy.cjs');
 
 const KEYMAP = {
   RIGHT: 0,
@@ -12,7 +12,7 @@ const KEYMAP = {
   START: 7,
 };
 
-const PRIVATE = "_" + process.hrtime().join(".");
+const PRIVATE = '_' + process.hrtime().join('.');
 function Interface() {
   let _that = (this[PRIVATE] = {
     __proto__: Interface._prototype,
@@ -27,7 +27,7 @@ Interface._prototype = {
   //Check to make sure the gameboy object has been created.
   initialized: function () {
     let _that = this[PRIVATE];
-    return typeof _that.gameboy === "object" && _that.gameboy != null;
+    return typeof _that.gameboy === 'object' && _that.gameboy != null;
   },
 
   /*
@@ -192,7 +192,7 @@ Interface.prototype = {
 
   initialized: function () {
     let _that = this[PRIVATE];
-    return typeof _that.gameboy === "object" && _that.gameboy != null;
+    return typeof _that.gameboy === 'object' && _that.gameboy != null;
   },
 
   save: function () {
@@ -221,8 +221,8 @@ Interface.prototype = {
   },
 
   setSpeed: function (speed) {
-    let _that = this[PRIVATE];
-    _that.gameboy.setSpeed(speed);
+    let _that = this?.[PRIVATE];
+    _that?.gameboy?.setSpeed?.(speed);
   },
 };
 

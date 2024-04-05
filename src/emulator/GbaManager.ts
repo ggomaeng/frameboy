@@ -11,22 +11,66 @@ declare global {
 const rootDir = process.cwd();
 
 export class GbaManager {
-  private instancese: Record<number, ServerBoy> = {};
+  private instances: Record<
+    number,
+    {
+      gameboy: ServerBoy;
+      lastActivityAt: number;
+    }
+  > = {};
 
   private static instance: GbaManager;
 
+  public static getInstance(): GbaManager {
+    if (globalThis.gbaManager) {
+      return globalThis.gbaManager;
+    }
+    if (!GbaManager.instance) {
+      GbaManager.instance = new GbaManager();
+      globalThis.gbaManager = GbaManager.instance;
+      return GbaManager.instance;
+    }
+
+    return GbaManager.instance;
+  }
+
   private constructor() {
-    // private to prevent direct construction calls with the `new` operator.
+    console.log("GbaManager created - running ticks");
+    setInterval(this.cleanupInactiveInstances.bind(this), 1000 * 60 * 2); // check every 2 minutes
+  }
+
+  private cleanupInactiveInstances() {
+    console.log("Cleaning up inactive instances");
+    const now = Date.now();
+    for (const fid in this.instances) {
+      const instance = this.instances[fid];
+      if (now - instance.lastActivityAt > 1000 * 60 * 2) {
+        instance.gameboy.cleanup();
+        delete this.instances[fid];
+      }
+    }
+  }
+
+  public getTotalPlayers() {
+    return Object.keys(this.instances).length;
+  }
+
+  public updateActivity(fid: number) {
+    console.log("Updating activity", fid);
+    this.instances[fid].lastActivityAt = Date.now();
   }
 
   public getGameboy(fid: number) {
-    if (this.instancese[fid]) {
-      return this.instancese[fid];
+    if (this.instances[fid]) {
+      return this.instances[fid].gameboy;
     }
 
     const gameboy: ServerBoy = new GameBoy();
 
-    this.instancese[fid] = gameboy;
+    this.instances[fid] = {
+      gameboy,
+      lastActivityAt: Date.now(),
+    };
     return gameboy;
   }
 
@@ -41,17 +85,6 @@ export class GbaManager {
 
     const parsed = JSON.parse(saveState.toString());
     gameboy.load(rom, parsed);
-  }
-
-  public static getInstance(): GbaManager {
-    if (globalThis.gbaManager) {
-      return globalThis.gbaManager;
-    }
-    if (!GbaManager.instance) {
-      GbaManager.instance = new GbaManager();
-      globalThis.gbaManager = GbaManager.instance;
-    }
-    return GbaManager.instance;
   }
 
   public async generateGif(
@@ -73,11 +106,21 @@ export class GbaManager {
     // encoder.setDelay(1000 / 30); // 30 FPS
     encoder.setQuality(10);
     // for chat don't repeat
-    encoder.setRepeat(wasMove ? 0 : -1);
 
     const CHAT_SIZE = CHAT.length;
-    const LONGER_FRAME_COUNT = 50;
-    let frameRenderCount = wasMove ? 5 : 10;
+    const FAST_SPEED = 200;
+    const DEFAULT_SPEED = 35;
+    let frameRenderCount = 5;
+
+    if (!wasMove) {
+      encoder.setRepeat(-1);
+      gameboy.setSpeed(FAST_SPEED);
+    } else {
+      frameRenderCount = 3;
+      encoder.setRepeat(0);
+      gameboy.setSpeed(DEFAULT_SPEED);
+    }
+
     let isChat = true;
     for (let i = 0; i < frameRenderCount; i++) {
       gameboy.doFrame();
@@ -92,15 +135,12 @@ export class GbaManager {
         }
       }
 
-      // render longer frames if not chat & move is not pressed
-      if (!isChat && !wasMove && frameRenderCount < LONGER_FRAME_COUNT) {
-        console.log("incrase framerender");
-        frameRenderCount = LONGER_FRAME_COUNT;
+      if (isChat || !wasMove) {
+        gameboy.setSpeed(FAST_SPEED);
+        encoder.setRepeat(-1);
       }
       rgbaArray.push(...CREDIT);
       const img = Buffer.from(rgbaArray);
-
-      // console.log(rgbaArray.length);
       encoder.addFrame(img as any);
     }
 

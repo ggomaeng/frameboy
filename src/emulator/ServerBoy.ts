@@ -31,10 +31,6 @@ const start = Date.now();
 // encoder.start();
 
 for (let i = 0; i < frameRenderCount; i++) {
-  console.log("tick", i);
-  // if (i === 100) {
-  //   gameboy.pause();
-  // }
   gameboy.doFrame();
   const screen = gameboy.getScreen();
   const rgbaArray: number[] = structuredClone(EMPTY_FRAME_160_144);

@@ -20,7 +20,6 @@ function Interface() {
     frames: 0, //Number of elapsed frames
     pressed: new Array(Object.keys(KEYMAP).length), //Which keys are currently being held down
   });
-  console.log("private", PRIVATE);
   _that[PRIVATE] = _that;
 }
 
@@ -62,6 +61,7 @@ Interface._prototype = {
     if (_that.initialized() && _that.running()) {
       _that.gameboy.stopEmulator |= 2;
       _that.frames = 0; //Reset internal variables
+      _that.gameboy = null;
     }
   },
 };
@@ -205,7 +205,6 @@ Interface.prototype = {
     let _that = this[PRIVATE];
     _that.gameboy = new GameBoyCore(ROM);
     _that.gameboy.load(memory);
-    console.log(_that.gameboy.fromSaveState);
     _that.gameboy.stopEmulator &= 1;
     // _that.gameboy.iterations = 0;
     return true;
@@ -214,6 +213,16 @@ Interface.prototype = {
   getAudio: function () {
     let _that = this[PRIVATE];
     return _that.gameboy.audioBuffer;
+  },
+
+  cleanup: function () {
+    let _that = this[PRIVATE];
+    _that.shutdownEmulation();
+  },
+
+  setSpeed: function (speed) {
+    let _that = this[PRIVATE];
+    _that.gameboy.setSpeed(speed);
   },
 };
 

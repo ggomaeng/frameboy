@@ -9,14 +9,10 @@ import { takeRight } from "lodash-es";
 // for (let i = 0; i < 160 * 16 * 4; i++) {
 //   screen.pop();
 // }
-console.log(screen.length);
 
 const rows = 3;
 const lastrows = 160 * rows * 4;
 const row = takeRight(screen, lastrows);
-
-console.log(screen.length);
-console.log(row.length);
 
 writeFileSync(`./public/chat.json`, JSON.stringify(row));
 

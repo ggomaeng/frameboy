@@ -23,6 +23,7 @@ const origin =
 console.log(origin);
 
 const GBA = GbaManager.getInstance();
+const GAME = "pokemon-yellow.gbc";
 
 const BUTTONS = {
   1: "LEFT",
@@ -40,7 +41,6 @@ type AppState = {
   mode: "move" | "menu";
   multiplier: number;
   lastKey: keyof typeof ServerBoy.KEYMAP;
-  isChat: boolean;
 };
 
 const neynarMiddleware = neynar({
@@ -54,9 +54,8 @@ export const app = new Frog<{
   imageAspectRatio: "1:1",
   initialState: {
     started: false,
-    isChat: false,
     mode: "move",
-    multiplier: 2,
+    multiplier: 1,
     lastKey: "A",
   },
 });
@@ -89,9 +88,28 @@ app.frame("/play", neynarMiddleware, async (c) => {
   const user = c.var.interactor;
   const fid = user?.fid || 1;
 
+  if (GBA.getTotalPlayers() >= 100) {
+    return c.res({
+      image: (
+        <div tw="w-full h-full flex flex-col items-center justify-center text-white bg-black">
+          <div tw="text-4xl">🎮</div>
+          <div tw="text-2xl mt-5">
+            There are too many players playing right now
+          </div>
+          <div tw="mt-5">Refresh to try again</div>
+          <div tw="text-base mt-10 text-gray-500 flex">
+            Current players: {GBA.getTotalPlayers().toString()}
+          </div>
+        </div>
+      ),
+      intents: [<Button>Refresh</Button>],
+    });
+  }
+
   const state = deriveState((previousState) => {
     const gameboy = GBA.getGameboy(fid);
 
+    // debug
     if (inputText === "memory") {
       const memory = gameboy.save();
       // const memory = gameboy.getMemory();
@@ -108,7 +126,7 @@ app.frame("/play", neynarMiddleware, async (c) => {
         previousState.mode = "move";
       }
     } else if (!previousState?.started || !gameboy.initialized()) {
-      GBA.startGame(fid, "pokemon-yellow.gbc");
+      GBA.startGame(fid, GAME);
       previousState.started = true;
     } else if (buttonIndex) {
       const gameboy = GBA.getGameboy(fid);
@@ -119,21 +137,25 @@ app.frame("/play", neynarMiddleware, async (c) => {
       }
 
       let index = buttonIndex;
-      if (previousState.mode === "menu" || previousState.isChat) index += 4;
+      if (previousState.mode === "menu") index += 4;
       const key = BUTTONS[index as keyof typeof BUTTONS];
       for (let i = 0; i < previousState.multiplier; i++) {
         gameboy.pressKey(key);
         gameboy.doFrame();
       }
 
+      GBA.updateActivity(fid);
       const screen = gameboy.getScreen();
-      previousState.isChat = isChatScreen(screen);
+      const isChat = isChatScreen(screen);
+      if (isChat) {
+        previousState.mode = "menu";
+      }
 
       previousState.lastKey = key;
 
-      // save state
+      // save state per user
       writeFile(
-        `${rootDir}/saves/pokemon-yellow.gbc/${fid}.json`,
+        `${rootDir}/saves/${GAME}/${fid}.json`,
         JSON.stringify(gameboy.save()),
         (err) => {
           if (err) {
@@ -144,26 +166,27 @@ app.frame("/play", neynarMiddleware, async (c) => {
     }
   });
 
-  const { multiplier, lastKey, isChat } = state;
+  const { multiplier, mode, lastKey } = state;
   const multiplierText = multiplier > 1 ? `${multiplier} x ` : "";
 
   return c.res({
+    // image: <div tw="flex">hello</div>,
     image: `${origin}/pokemon/stream/${fid}/${lastKey}?t=${Date.now()}`,
     intents:
-      state.mode === "move" && !isChat
+      mode === "menu"
         ? [
-            <TextInput placeholder={"t(toggle)/number(key multiplier)"} />,
-            <Button>{multiplierText}←</Button>,
-            <Button>{multiplierText}→</Button>,
-            <Button>{multiplierText}↑</Button>,
-            <Button>{multiplierText}↓</Button>,
-          ]
-        : [
             <TextInput placeholder={"t(toggle)/number(key multiplier)"} />,
             <Button>SEL</Button>,
             <Button>START</Button>,
             <Button>{multiplierText}A</Button>,
             <Button>{multiplierText}B</Button>,
+          ]
+        : [
+            <TextInput placeholder={"t(toggle)/number(key multiplier)"} />,
+            <Button>{multiplierText}←</Button>,
+            <Button>{multiplierText}→</Button>,
+            <Button>{multiplierText}↑</Button>,
+            <Button>{multiplierText}↓</Button>,
           ],
   });
 });

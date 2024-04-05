@@ -10,6 +10,5 @@ sharp(img)
   .raw()
   .toBuffer()
   .then((data) => {
-    console.log(data.length);
     writeFileSync(`${root}/public/credit.json`, JSON.stringify(data));
   });

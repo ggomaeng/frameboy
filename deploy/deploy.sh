@@ -7,16 +7,16 @@ RELEASE_DIR="/srv/web/frameboy.xyz" &&
 BUN="/home/updatebot/.bun/bin/bun" &&
 
 echo "Copy .env.production to the shared directory and link..." &&
-scp .env.production mintclub:$RELEASE_DIR/.env &&
+scp .env.production oracle:$RELEASE_DIR/.env &&
 
-ssh mintclub "
+ssh oracle "
   cd $RELEASE_DIR &&
   git checkout bun.lockb &&
   git pull &&
   $BUN install" &&
 
 echo "Reloading process..." &&
-ssh mintclub "pm2 reload frameboy.xyz --update-env --node-args='--no-warnings=ExperimentalWarning'" &&
+ssh oracle "pm2 reload frameboy.xyz --update-env --node-args='--no-warnings=ExperimentalWarning'" &&
 
 echo "_________" &&
 echo "Deploy completed successfully on $TIMESTAMP"

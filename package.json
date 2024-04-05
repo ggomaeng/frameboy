@@ -19,6 +19,7 @@
     "gifencoder": "^2.0.1",
     "hono": "^4",
     "lodash-es": "^4.17.21",
+    "pinata-fdk": "^3.6.1",
     "sharp": "^0.33.3",
     "winston": "^3.13.0"
   },

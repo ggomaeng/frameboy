@@ -3,11 +3,12 @@ import dotenv from 'dotenv';
 import { Button, Frog, TextInput } from 'frog';
 import { neynar } from 'frog/middlewares';
 import { writeFile, writeFileSync } from 'fs';
+import { PinataFDK } from 'pinata-fdk';
 import sharp from 'sharp';
-import { NEYNAR_API_KEY } from '../../env/server-env.js';
-import { GbaManager } from '../emulator/GbaManager.js';
+import { NEYNAR_API_KEY, PINATA_API_JWT } from '../../env/server-env.js';
 import ServerBoy from '../../types/serverboy';
 import { isChatScreen } from '../../utils/pixels';
+import { GbaManager } from '../emulator/GbaManager.js';
 import help from './help';
 
 dotenv.config();
@@ -43,6 +44,11 @@ type AppState = {
   lastKey: keyof typeof ServerBoy.KEYMAP;
 };
 
+const fdk = new PinataFDK({
+  pinata_jwt: PINATA_API_JWT,
+  pinata_gateway: 'jade-general-jackal-249.mypinata.cloud',
+});
+
 const neynarMiddleware = neynar({
   apiKey: NEYNAR_API_KEY,
   features: ['interactor'],
@@ -57,7 +63,12 @@ export const app = new Frog<{
     multiplier: 1,
     lastKey: 'A',
   },
-});
+}).use(
+  // @ts-ignore
+  fdk.analyticsMiddleware({
+    frameId: 'pokemon',
+  }),
+);
 
 app.hono.get('/stream/:id/:key', async (c) => {
   const id = Number(c.req.param('id'));

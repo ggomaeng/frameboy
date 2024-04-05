@@ -55,7 +55,7 @@ export const app = new Frog<{
   initialState: {
     started: false,
     mode: "move",
-    multiplier: 1,
+    multiplier: 3,
     lastKey: "A",
   },
 });

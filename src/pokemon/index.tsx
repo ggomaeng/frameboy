@@ -122,25 +122,21 @@ app.frame('/play', neynarMiddleware, async (c) => {
       writeFileSync(`screen.json`, JSON.stringify(screen));
     }
 
-    if (!gameboy.initialized()) {
+    const inputTextIsNum = inputText && /^\d+$/.test(inputText);
+    if (inputTextIsNum && Number(inputText) >= 1) {
+      previousState.multiplier = Number(inputText);
+    } else if (inputText) {
+      // only toggle
+      if (previousState.mode === 'move') {
+        previousState.mode = 'menu';
+      } else {
+        previousState.mode = 'move';
+      }
+    } else if (!gameboy.initialized()) {
       GBA.startGame(fid, GAME);
     } else if (buttonIndex) {
       const gameboy = GBA.getGameboy(fid);
       GBA.updateActivity(fid);
-
-      const inputTextIsNum = inputText && /^\d+$/.test(inputText);
-      if (inputTextIsNum && Number(inputText) >= 1) {
-        previousState.multiplier = Number(inputText);
-      } else if (inputText) {
-        // only toggle
-        if (previousState.mode === 'move') {
-          previousState.mode = 'menu';
-        } else {
-          previousState.mode = 'move';
-        }
-        return;
-      }
-
       let index = buttonIndex;
       if (previousState.mode === 'menu') index += 4;
       const key = BUTTONS[index as keyof typeof BUTTONS];

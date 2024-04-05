@@ -54,7 +54,7 @@ export const app = new Frog<{
   imageAspectRatio: '1:1',
   initialState: {
     mode: 'move',
-    multiplier: 3,
+    multiplier: 1,
     lastKey: 'A',
   },
 });

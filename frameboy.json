@@ -6,8 +6,8 @@
       "exec_mode": "fork",
       "node_args": "",
       "merge_logs": true,
-      "interpreter": "/home/updatebot/.bun/bin/bun",
-      "cwd": "/srv/web/mintv2-frames",
+      "interpreter": "/home/ubuntu/.bun/bin/bun",
+      "cwd": "/srv/web/frameboy.xyz",
       "env": {
         "NODE_ENV": "production"
       }

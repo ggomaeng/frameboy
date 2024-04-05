@@ -92,7 +92,8 @@ app.frame("/play", neynarMiddleware, async (c) => {
       let index = buttonIndex;
       if (previousState.mode === "menu") index += 4;
       const key = BUTTONS[index as keyof typeof BUTTONS];
-      gameboy.pressKey(BUTTONS[index as keyof typeof BUTTONS]);
+      console.log({ key });
+      gameboy.pressKey(key);
     }
   });
 

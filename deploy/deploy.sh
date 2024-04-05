@@ -16,7 +16,7 @@ ssh oracle "
   $BUN install" &&
 
 echo "Reloading process..." &&
-ssh oracle "pm2 reload frameboy.xyz --update-env --node-args='--no-warnings=ExperimentalWarning'" &&
+ssh oracle "pm2 reload frameboy --update-env --node-args='--no-warnings=ExperimentalWarning'" &&
 
 echo "_________" &&
 echo "Deploy completed successfully on $TIMESTAMP"

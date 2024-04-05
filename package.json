@@ -32,5 +32,5 @@
     "eslint-config-prettier": "^9.1.0",
     "prettier-plugin-tailwindcss": "^0.5.13"
   },
-  "version": "0.0.14"
+  "version": "0.0.15"
 }

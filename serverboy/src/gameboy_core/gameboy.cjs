@@ -114,6 +114,7 @@ GameBoyCore.prototype.start = function () {
 
 GameBoyCore.prototype.load = function (memory) {
   this.returnFromState(memory);
+  this.doubleSpeedShifter = 2;
   this.run(); //Start the emulation.
 };
 

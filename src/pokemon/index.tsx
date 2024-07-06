@@ -88,7 +88,8 @@ app.hono.get('/stream/:id/:key', async (c) => {
 
 app.frame('/', async (c) => {
   return c.res({
-    image: 'https://r2.easyimg.io/o7loqv80m/gbc_optimize.gif',
+    image:
+      'https://imagedelivery.net/BXluQx4ige9GuW0Ia56BHw/3f6aef68-68d7-4190-e50a-a37afa323c00/rectcontain3',
     intents: [<Button action="/play">Play FrameBoy 🎮</Button>],
   });
 });
